@@ -1,4 +1,12 @@
 
+<a name="v2.2.0"></a>
+## [v2.2.0](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.1.0...v2.2.0) (2022-05-10)
+
+### Features
+
+* **redis:** upgrade go-redis from v7 to v8
+
+
 <a name="v2.1.0"></a>
 ## [v2.1.0](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.0.0...v2.1.0) (2020-10-15)
 
