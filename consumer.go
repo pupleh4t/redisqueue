@@ -47,6 +47,9 @@ type ConsumerOptions struct {
 	// will allow messages to be reaped faster, but it will put more load on
 	// Redis.
 	ReclaimInterval time.Duration
+	// ReclaimCount is count of max claimed messages of 1 tick reclaim interval.
+	// Reclaim will be only executed if only Pending messages of self consumerID already 0
+	ReclaimCount int
 	// BufferSize determines the size of the channel uses to coordinate the
 	// processing of the messages. This determines the maximum number of
 	// in-flight messages.
@@ -129,6 +132,10 @@ func NewConsumerWithOptions(options *ConsumerOptions) (*Consumer, error) {
 		r = options.RedisClient
 	} else {
 		r = newRedisClient(options.RedisOptions)
+	}
+
+	if options.ReclaimCount <= 0 {
+		options.ReclaimCount = 10
 	}
 
 	if err := redisPreflightChecks(r); err != nil {
@@ -257,12 +264,30 @@ func (c *Consumer) reclaim() {
 				end := "+"
 
 				for {
+					ownPendingMsgs, err := c.redis.XPendingExt(context.TODO(), &redis.XPendingExtArgs{
+						Stream:   stream,
+						Group:    c.options.GroupName,
+						Consumer: c.options.Name,
+						Start:    start,
+						End:      end,
+						Count:    1,
+					}).Result()
+					if err != nil && err != redis.Nil {
+						c.Errors <- errors.Wrap(err, "error listing pending self messages")
+						break
+					}
+
+					if len(ownPendingMsgs) > 0 {
+						// in progress consuming self messages
+						break
+					}
+
 					res, err := c.redis.XPendingExt(context.TODO(), &redis.XPendingExtArgs{
 						Stream: stream,
 						Group:  c.options.GroupName,
 						Start:  start,
 						End:    end,
-						Count:  int64(c.options.BufferSize - len(c.queue)),
+						Count:  int64(c.options.ReclaimCount),
 					}).Result()
 					if err != nil && err != redis.Nil {
 						c.Errors <- errors.Wrap(err, "error listing pending messages")
