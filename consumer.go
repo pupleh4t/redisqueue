@@ -205,6 +205,12 @@ func (c *Consumer) Run() {
 			c.Errors <- errors.Wrap(err, "error creating consumer group")
 			return
 		}
+
+		err2 := c.redis.XGroupCreateConsumer(context.TODO(), stream, c.options.GroupName, consumer.id)
+		if err2 != nil {
+			c.Errors <- errors.Wrap(err, "error creating consumer group")
+			return
+		}
 	}
 
 	for i := 0; i < len(c.consumers); i++ {
@@ -370,7 +376,7 @@ func (c *Consumer) poll() {
 				Group:    c.options.GroupName,
 				Consumer: c.options.Name,
 				Streams:  c.streams,
-				Count:    int64(c.options.BufferSize - len(c.queue)),
+				Count:    1,
 				Block:    c.options.BlockingTimeout,
 			}).Result()
 			if err != nil {
