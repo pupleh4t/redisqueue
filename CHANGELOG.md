@@ -1,4 +1,12 @@
 
+<a name="v2.3.1-alpha004"></a>
+## [v2.3.1-alpha004](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.3.1-alpha003...v2.3.1-alpha004) (2022-05-13)
+
+### Features
+
+* **consumer:** fix xgroupcreateconsumer on run
+
+
 <a name="v2.3.1-alpha003"></a>
 ## [v2.3.1-alpha003](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.3.1-alpha002...v2.3.1-alpha003) (2022-05-13)
 
