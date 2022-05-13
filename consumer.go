@@ -376,6 +376,7 @@ func (c *Consumer) poll() {
 			}
 			return
 		default:
+			fmt.Println("polling...")
 			res, err := c.redis.XReadGroup(context.TODO(), &redis.XReadGroupArgs{
 				Group:    c.options.GroupName,
 				Consumer: c.options.Name,
