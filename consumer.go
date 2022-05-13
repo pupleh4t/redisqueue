@@ -197,9 +197,9 @@ func (c *Consumer) Run() {
 		return
 	}
 
-	for stream := range c.consumers {
+	for stream, consumer := range c.consumers {
 		c.streams = append(c.streams, stream)
-		err := c.redis.XGroupCreateMkStream(context.TODO(), stream, c.options.GroupName, c.options.Name).Err()
+		err := c.redis.XGroupCreateMkStream(context.TODO(), stream, c.options.GroupName, consumer.id).Err()
 		// ignoring the BUSYGROUP error makes this a noop
 		if err != nil && err.Error() != "BUSYGROUP Consumer Group name already exists" {
 			c.Errors <- errors.Wrap(err, "error creating consumer group")
