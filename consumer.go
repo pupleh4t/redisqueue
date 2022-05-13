@@ -205,10 +205,13 @@ func (c *Consumer) Run() {
 			c.Errors <- errors.Wrap(err, "error creating consumer group")
 			return
 		}
+	}
 
+	for stream, consumer := range c.consumers {
+		fmt.Println("run: registering consumerID=", consumer.id, ", stream=", stream)
 		err2 := c.redis.XGroupCreateConsumer(context.TODO(), stream, c.options.GroupName, consumer.id)
 		if err2 != nil {
-			c.Errors <- errors.Wrap(err, "error creating consumer group")
+			c.Errors <- errors.Wrap(err2.Err(), "error creating consumer group")
 			return
 		}
 	}
