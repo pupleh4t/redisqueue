@@ -199,7 +199,7 @@ func (c *Consumer) Run() {
 
 	for stream, consumer := range c.consumers {
 		c.streams = append(c.streams, stream)
-		fmt.Println("run: registering consumerID=", c.options.Name, ", stream=", stream)
+		fmt.Println("run: registering stream consumerID=", c.options.Name, ", stream=", stream)
 		err := c.redis.XGroupCreateMkStream(context.TODO(), stream, c.options.GroupName, consumer.id).Err()
 		// ignoring the BUSYGROUP error makes this a noop
 		if err != nil && err.Error() != "BUSYGROUP Consumer Group name already exists" {
@@ -207,18 +207,21 @@ func (c *Consumer) Run() {
 			return
 		}
 
-		err2 := c.redis.XGroupCreateConsumer(context.TODO(), stream, c.options.GroupName, c.options.Name)
-		if err2 != nil {
-			c.Errors <- errors.Wrap(err2.Err(), "error creating consumer group")
-			return
-		}
+		fmt.Println("run: registering stream consumer consumerID=", c.options.Name, ", stream=", stream)
+		_ = c.redis.XGroupCreateConsumer(context.TODO(), stream, c.options.GroupName, c.options.Name)
+		//if err2 != nil {
+		//	c.Errors <- errors.Wrap(err2.Err(), "error creating consumer group")
+		//	return
+		//}
 	}
 
 	for i := 0; i < len(c.consumers); i++ {
 		c.streams = append(c.streams, ">")
 	}
 
+	fmt.Println("run reclaim...")
 	go c.reclaim()
+	fmt.Println("run poll...")
 	go c.poll()
 
 	stop := newSignalHandler()
