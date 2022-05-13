@@ -199,6 +199,7 @@ func (c *Consumer) Run() {
 
 	for stream, consumer := range c.consumers {
 		c.streams = append(c.streams, stream)
+		fmt.Println("run: registering consumerID=", c.options.Name, ", stream=", stream)
 		err := c.redis.XGroupCreateMkStream(context.TODO(), stream, c.options.GroupName, consumer.id).Err()
 		// ignoring the BUSYGROUP error makes this a noop
 		if err != nil && err.Error() != "BUSYGROUP Consumer Group name already exists" {
@@ -206,7 +207,6 @@ func (c *Consumer) Run() {
 			return
 		}
 
-		fmt.Println("run: registering consumerID=", c.options.Name, ", stream=", stream)
 		err2 := c.redis.XGroupCreateConsumer(context.TODO(), stream, c.options.GroupName, c.options.Name)
 		if err2 != nil {
 			c.Errors <- errors.Wrap(err2.Err(), "error creating consumer group")
@@ -392,6 +392,7 @@ func (c *Consumer) poll() {
 			}
 
 			for _, r := range res {
+				fmt.Println("poll: receiving message. stream=", r.Stream)
 				c.enqueue(r.Stream, r.Messages)
 			}
 		}
