@@ -1,4 +1,12 @@
 
+<a name="v2.3.1-alpha007"></a>
+## [v2.3.1-alpha007](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.3.1-alpha006...v2.3.1-alpha007) (2022-05-13)
+
+### Features
+
+* **consumer:** add more logging
+
+
 <a name="v2.3.1-alpha006"></a>
 ## [v2.3.1-alpha006](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.3.1-alpha005...v2.3.1-alpha006) (2022-05-13)
 
