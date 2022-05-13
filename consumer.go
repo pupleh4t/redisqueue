@@ -2,6 +2,7 @@ package redisqueue
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"os"
 	"sync"
@@ -135,7 +136,7 @@ func NewConsumerWithOptions(options *ConsumerOptions) (*Consumer, error) {
 	}
 
 	if options.ReclaimCount <= 0 {
-		options.ReclaimCount = 10
+		options.ReclaimCount = 1
 	}
 
 	if err := redisPreflightChecks(r); err != nil {
@@ -279,9 +280,11 @@ func (c *Consumer) reclaim() {
 
 					if len(ownPendingMsgs) > 0 {
 						// in progress consuming self messages
+						fmt.Println("tick reclaim: ", "current consumerID=", c.options.Name, " is not empty")
 						break
 					}
 
+					fmt.Println("tick reclaim: ", "current consumerID=", c.options.Name, " is empty. try claiming pending messages")
 					res, err := c.redis.XPendingExt(context.TODO(), &redis.XPendingExtArgs{
 						Stream: stream,
 						Group:  c.options.GroupName,
@@ -293,6 +296,7 @@ func (c *Consumer) reclaim() {
 						c.Errors <- errors.Wrap(err, "error listing pending messages")
 						break
 					}
+					fmt.Println("tick reclaim: ", "claiming ", len(res), " to consumerID=", c.options.Name)
 
 					if len(res) == 0 {
 						break
@@ -329,6 +333,7 @@ func (c *Consumer) reclaim() {
 									continue
 								}
 							}
+							fmt.Println("tick reclaim: ", "claiming and executing messageID=", r.ID)
 							c.enqueue(stream, claimres)
 						}
 					}
