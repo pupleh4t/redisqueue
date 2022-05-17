@@ -272,26 +272,6 @@ func (c *Consumer) reclaim() {
 				end := "+"
 
 				for {
-					ownPendingMsgs, err := c.redis.XPendingExt(context.TODO(), &redis.XPendingExtArgs{
-						Stream:   stream,
-						Group:    c.options.GroupName,
-						Consumer: c.options.Name,
-						Start:    start,
-						End:      end,
-						Count:    1,
-					}).Result()
-					if err != nil && err != redis.Nil {
-						c.Errors <- errors.Wrap(err, "error listing pending self messages")
-						break
-					}
-
-					if len(ownPendingMsgs) > 0 {
-						// in progress consuming self messages
-						fmt.Println("libQueue: ", "tick reclaim: ", "current consumerID=", c.options.Name, " is not empty")
-						break
-					}
-
-					fmt.Println("libQueue: ", "tick reclaim: ", "current consumerID=", c.options.Name, " is empty. try claiming pending messages")
 					res, err := c.redis.XPendingExt(context.TODO(), &redis.XPendingExtArgs{
 						Stream: stream,
 						Group:  c.options.GroupName,
@@ -309,8 +289,6 @@ func (c *Consumer) reclaim() {
 						break
 					}
 
-					msgs := make([]string, 0)
-
 					for _, r := range res {
 						if r.Idle >= c.options.VisibilityTimeout {
 							claimres, err := c.redis.XClaim(context.TODO(), &redis.XClaimArgs{
@@ -321,7 +299,7 @@ func (c *Consumer) reclaim() {
 								Messages: []string{r.ID},
 							}).Result()
 							if err != nil && err != redis.Nil {
-								c.Errors <- errors.Wrapf(err, "error claiming %d message(s)", len(msgs))
+								c.Errors <- errors.Wrapf(err, "error claiming messageID=%s", r.ID)
 								break
 							}
 							// If the Redis nil error is returned, it means that
@@ -376,6 +354,7 @@ func (c *Consumer) poll() {
 			if len(c.queue) > 0 {
 				// skipping pooling if queue > 0
 				time.Sleep(time.Millisecond * 100)
+				continue
 			}
 			fmt.Println("libQueue: ", "polling...")
 			res, err := c.redis.XReadGroup(context.TODO(), &redis.XReadGroupArgs{
