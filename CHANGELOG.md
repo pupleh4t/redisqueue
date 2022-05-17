@@ -1,6 +1,14 @@
 
+<a name="v2.3.2-alpha002"></a>
+## [v2.3.2-alpha002](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.3.2-alpha001...v2.3.2-alpha002) (2022-05-17)
+
+### Features
+
+* **consumers:** make consumer less greedy if still process
+
+
 <a name="v2.3.2-alpha001"></a>
-## [v2.3.2-alpha001](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.3.1...v2.3.2-alpha001) (0001-01-01)
+## [v2.3.2-alpha001](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.3.1...v2.3.2-alpha001) (2022-05-17)
 
 
 <a name="v2.3.1"></a>
