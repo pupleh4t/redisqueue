@@ -1,4 +1,12 @@
 
+<a name="v2.3.2-alpha003"></a>
+## [v2.3.2-alpha003](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.3.2-alpha002...v2.3.2-alpha003) (2022-05-17)
+
+### Features
+
+* **consumers:** update reclaim strategy
+
+
 <a name="v2.3.2-alpha002"></a>
 ## [v2.3.2-alpha002](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.3.2-alpha001...v2.3.2-alpha002) (2022-05-17)
 
