@@ -373,6 +373,10 @@ func (c *Consumer) poll() {
 			}
 			return
 		default:
+			if len(c.queue) > 0 {
+				// skipping pooling if queue > 0
+				time.Sleep(time.Millisecond * 100)
+			}
 			fmt.Println("libQueue: ", "polling...")
 			res, err := c.redis.XReadGroup(context.TODO(), &redis.XReadGroupArgs{
 				Group:    c.options.GroupName,
