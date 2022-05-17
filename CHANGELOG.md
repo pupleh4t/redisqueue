@@ -1,4 +1,12 @@
 
+<a name="v2.3.1"></a>
+## [v2.3.1](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.3.1-alpha009...v2.3.1) (2022-05-17)
+
+### Features
+
+* **logging:** update logging prefix
+
+
 <a name="v2.3.1-alpha009"></a>
 ## [v2.3.1-alpha009](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.3.1-alpha008...v2.3.1-alpha009) (2022-05-13)
 
