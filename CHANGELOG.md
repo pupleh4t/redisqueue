@@ -1,4 +1,8 @@
 
+<a name="v2.3.3"></a>
+## [v2.3.3](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.3.2-alpha004...v2.3.3) (0001-01-01)
+
+
 <a name="v2.3.2-alpha004"></a>
 ## [v2.3.2-alpha004](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.3.2-alpha003...v2.3.2-alpha004) (2022-06-06)
 
