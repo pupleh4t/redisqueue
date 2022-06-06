@@ -207,18 +207,21 @@ func (c *Consumer) Run() {
 			return
 		}
 
-		fmt.Println("libQueue: ", "run: registering stream consumer consumerID=", c.options.Name, ", stream=", stream)
+		fmt.Println("libQueue:", "run: registering stream consumer consumerID", c.options.Name, "stream=", stream)
 		_ = c.redis.XGroupCreateConsumer(context.TODO(), stream, c.options.GroupName, c.options.Name)
-		// TODO: handle this error properly
 	}
 
 	for i := 0; i < len(c.consumers); i++ {
 		c.streams = append(c.streams, ">")
 	}
 
-	fmt.Println("libQueue: ", "run reclaim...")
+	if isDebug {
+		fmt.Println("libQueue: ", "run reclaim...")
+	}
 	go c.reclaim()
-	fmt.Println("libQueue: ", "run poll...")
+	if isDebug {
+		fmt.Println("libQueue: ", "run poll...")
+	}
 	go c.poll()
 
 	stop := newSignalHandler()
@@ -283,7 +286,9 @@ func (c *Consumer) reclaim() {
 						c.Errors <- errors.Wrap(err, "error listing pending messages")
 						break
 					}
-					fmt.Println("libQueue: ", "tick reclaim: ", "claiming ", len(res), " to consumerID=", c.options.Name)
+					if isDebug {
+						fmt.Println("libQueue: ", "tick reclaim: ", "claiming ", len(res), " to consumerID=", c.options.Name)
+					}
 
 					if len(res) == 0 {
 						break
@@ -318,7 +323,9 @@ func (c *Consumer) reclaim() {
 									continue
 								}
 							}
-							fmt.Println("libQueue: ", "tick reclaim: ", "claiming and executing messageID=", r.ID)
+							if isDebug {
+								fmt.Println("libQueue: ", "tick reclaim: ", "claiming and executing messageID=", r.ID)
+							}
 							c.enqueue(stream, claimres)
 						}
 					}
@@ -356,7 +363,9 @@ func (c *Consumer) poll() {
 				time.Sleep(time.Millisecond * 100)
 				continue
 			}
-			fmt.Println("libQueue: ", "polling...")
+			if isDebug {
+				fmt.Println("libQueue: ", "polling...")
+			}
 			res, err := c.redis.XReadGroup(context.TODO(), &redis.XReadGroupArgs{
 				Group:    c.options.GroupName,
 				Consumer: c.options.Name,
@@ -376,7 +385,9 @@ func (c *Consumer) poll() {
 			}
 
 			for _, r := range res {
-				fmt.Println("libQueue: ", "poll: receiving message. stream=", r.Stream)
+				if isDebug {
+					fmt.Println("libQueue: ", "poll: receiving message. stream=", r.Stream)
+				}
 				c.enqueue(r.Stream, r.Messages)
 			}
 		}
