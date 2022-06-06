@@ -1,4 +1,12 @@
 
+<a name="v2.3.2-alpha004"></a>
+## [v2.3.2-alpha004](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.3.2-alpha003...v2.3.2-alpha004) (2022-06-06)
+
+### Features
+
+* **logging:** filter log with LIBQUEUE_DEBUG env
+
+
 <a name="v2.3.2-alpha003"></a>
 ## [v2.3.2-alpha003](https://github.com/robinjoseph08/go-pg-migrations/compare/v2.3.2-alpha002...v2.3.2-alpha003) (2022-05-17)
 
